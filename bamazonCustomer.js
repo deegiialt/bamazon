@@ -82,10 +82,10 @@ var resultsArr = [];
 function displayProducts() {
 	connection.query('SELECT * FROM products', function (error, results, fields) {
 	  if (error) throw error;
-	  console.log(results)
+	  resultsArr = results;//setting empty array to results
 	  for(i = 0; i < results.length; i++) {
-	  	resultsArr = results;
 	  	var res = results[i];
+	  	console.log
 	  	console.log(`Id: ${res.item_id}, Product: ${res.product_name}, Price: ${res.price}, Qty: ${res.stock_quantity}`);
 	  }
 	});
@@ -107,25 +107,28 @@ function updateProducts() {
 		if(buy.buyerid && buy.buyerunit) {
 			var i = buy.buyerid - 1;
 			if(buy.buyerunit < resultsArr[i].stock_quantity) {
-				var newqty = 
-				//update SQL database to refelct remaining qty
-				//after update, show customer the total cost of purchase.
-				// console.log(`Total cost: $${//total cost}`);
+				var newqty = resultsArr[i].stock_quantity - buy.buyerunit;
+				updateStock();
 			} else {
 					console.log("Insufficient quantity!");
 					//prevent order from going through
+					//call startorder
 			}
 		} else {
 			console.log("Not a valid entry, try again (need both inputs).")
+			//call startorder
 		}
 	}
 	});			
 }
 
 function updateStock() {
-	connection.query('UPDATE products SET stock_quantity=? WHERE id=?', [buy.buyerunit, buy.buyerid], function (error, results, fields) {
+	connection.query('UPDATE products SET stock_quantity=? WHERE id=?', [newqty, buy.buyerid], function (error, results, fields) {
 		if(error) throw error;
-
+		console.log(`You have bought item: ${resultsArr[i].product_name} with a qty of: ${buy.buyerunit}`);
+		console.log(`Your total cost of purchase is: $${resultsArr[i].price}`);
+		//test
+		console.log("remaining: " + resultsArr[i].stock_quantity);
 	})
 }
 
